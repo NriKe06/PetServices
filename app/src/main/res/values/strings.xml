@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">PetServices</string>
+
+    <!--Login-->
+    <string name="et_user">Usuario</string>
+    <string name="et_pass">Password</string>
+    <string name="bt_login">INICIAR SESIÓN</string>
+    <string name="bt_signup">REGISTRARSE</string>
+
+    <!--Sign Up-->
+    <string name="sign_up_title">REGISTRO</string>
+    <string name="bt_user">Persona</string>
+    <string name="bt_company">Empresa</string>
 </resources>

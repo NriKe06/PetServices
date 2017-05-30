@@ -17,7 +17,7 @@
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="REGISTRO"/>
+        android:text="@string/sign_up_title"/>
 
     <LinearLayout
         android:layout_centerInParent="true"
@@ -28,14 +28,14 @@
 
         <Button
             android:id="@+id/bt_persona"
-            android:text="Persona"
+            android:text="@string/sign_up_title"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="150dp" />
 
         <Button
             android:id="@+id/bt_empresa"
-            android:text="Empresa"
+            android:text="@string/bt_company"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="150dp" />
