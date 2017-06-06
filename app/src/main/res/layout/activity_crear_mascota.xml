@@ -21,6 +21,7 @@
             android:text="MASCOTA"/>
 
         <EditText
+            android:id="@+id/et_nombre"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="30dp"
             android:layout_marginStart="30dp"
@@ -29,6 +30,8 @@
             android:hint="Nombre"/>
 
         <EditText
+            android:inputType="number"
+            android:id="@+id/et_edad"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="30dp"
             android:layout_marginStart="30dp"
@@ -37,6 +40,7 @@
             android:hint="Edad"/>
 
         <EditText
+            android:id="@+id/et_raza"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="30dp"
             android:layout_marginStart="30dp"
@@ -45,6 +49,7 @@
             android:hint="Raza"/>
 
         <TextView
+            android:id="@+id/tv_foto"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="30dp"
             android:layout_marginStart="30dp"

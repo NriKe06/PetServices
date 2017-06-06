@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.doapps.petservices">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".PetServicesApplication"
@@ -23,7 +23,8 @@
         <activity android:name=".Activities.CrearCuentaPersonaActivity" />
         <activity android:name=".Activities.CrearMascotaActivity" />
         <activity android:name=".Activities.CrearCuentaEmpresaActivity" />
-        <activity android:name=".Activities.MainActivity"/>
+        <activity android:name=".Activities.MainActivity" />
+        <activity android:name=".Activities.MessageDetailActivity"></activity>
     </application>
 
 </manifest>
