@@ -28,7 +28,7 @@
 
         <Button
             android:id="@+id/bt_persona"
-            android:text="@string/sign_up_title"
+            android:text="@string/bt_user"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="150dp" />

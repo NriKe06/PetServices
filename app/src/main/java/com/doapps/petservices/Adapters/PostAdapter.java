@@ -1,6 +1,7 @@
 package com.doapps.petservices.Adapters;
 
 import android.content.Context;
+import android.support.compat.BuildConfig;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.doapps.petservices.Models.Post;
+import com.doapps.petservices.Network.Models.PostResponse;
 import com.doapps.petservices.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -20,13 +23,18 @@ import java.util.List;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
 
     Context context;
-    List<Post> data;
+    List<PostResponse> data;
     private final LayoutInflater inflater;
 
-    public PostAdapter(Context context, List<Post> data) {
+    public PostAdapter(Context context, List<PostResponse> data) {
         this.context = context;
         this.data = data;
         inflater = LayoutInflater.from(context);
+    }
+
+    public void addPost(PostResponse post){
+        data.add(post);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -39,23 +47,29 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
         holder.tv_name.setText("NAME TEST");
-        holder.tv_post.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        holder.tv_post.setText(data.get(position).getDescription());
+        if(data.get(position).getImage() != null){
+            Picasso.with(context).load(data.get(position).getImage().getUrl()).into(holder.iv_photo);
+            holder.iv_photo.setVisibility(View.VISIBLE);
+        }else{
+            holder.iv_photo.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return 10;
+        return data.size();
     }
 
     public class MyHolder extends RecyclerView.ViewHolder{
 
-        ImageView iv_user;
         TextView tv_name;
         TextView tv_post;
+        ImageView iv_photo;
 
         public MyHolder(View itemView) {
             super(itemView);
-            iv_user = (ImageView) itemView.findViewById(R.id.iv_user);
+            iv_photo = (ImageView) itemView.findViewById(R.id.iv_photo);
             tv_name = (TextView) itemView.findViewById(R.id.tv_name);
             tv_post = (TextView) itemView.findViewById(R.id.tv_post);
         }

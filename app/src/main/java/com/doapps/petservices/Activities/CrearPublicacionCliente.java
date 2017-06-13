@@ -19,15 +19,19 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.doapps.petservices.Network.Models.PetResponse;
+import com.doapps.petservices.Network.Models.PostResponse;
 import com.doapps.petservices.PetServicesApplication;
 import com.doapps.petservices.R;
 import com.doapps.petservices.Utils.Constants;
@@ -43,25 +47,22 @@ import java.util.Date;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CrearMascotaActivity extends AppCompatActivity {
+public class CrearPublicacionCliente extends AppCompatActivity {
 
-    private EditText et_nombre;
-    private EditText et_edad;
-    private EditText et_raza;
-    private EditText et_peso;
-    private TextView tv_foto;
+    private Spinner sp_tipo;
+    private EditText et_descripcion;
     private RelativeLayout rl_photo;
     private ImageView iv_photo;
     private ImageView iv_remove;
+    private Button bt_foto;
+    private Button bt_publicar;
+    private TextView tv_tipo_error;
     private LinearLayout ll_container;
     private ProgressBar pb;
-
-    private Button bt_finalizar;
 
     private PreferenceManager manager;
 
@@ -71,40 +72,37 @@ public class CrearMascotaActivity extends AppCompatActivity {
 
     private ContentResolver contentResolver;
 
+    private String[] types;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_crear_mascota);
+        setContentView(R.layout.activity_crear_publicacion_cliente);
 
         contentResolver = getContentResolver();
 
         manager = PreferenceManager.getInstance(this);
 
+        types = getResources().getStringArray(R.array.sp_tipo_post);
+
         setupViews();
     }
 
-    private void setupViews(){
-        et_nombre = (EditText) findViewById(R.id.et_nombre);
-        et_edad = (EditText) findViewById(R.id.et_edad);
-        et_raza = (EditText) findViewById(R.id.et_raza);
-        et_peso = (EditText) findViewById(R.id.et_peso);
-        tv_foto = (TextView) findViewById(R.id.tv_foto);
+    private void setupViews() {
+        sp_tipo = (Spinner) findViewById(R.id.sp_tipo);
+        et_descripcion = (EditText) findViewById(R.id.et_descripcion);
         rl_photo = (RelativeLayout) findViewById(R.id.rl_photo);
         iv_photo = (ImageView) findViewById(R.id.iv_photo);
         iv_remove = (ImageView) findViewById(R.id.iv_remove);
+        bt_foto = (Button) findViewById(R.id.bt_foto);
+        bt_publicar = (Button) findViewById(R.id.bt_publicar);
+        tv_tipo_error = (TextView) findViewById(R.id.tv_tipo_error);
         ll_container = (LinearLayout) findViewById(R.id.ll_container);
         pb = (ProgressBar) findViewById(R.id.pb);
 
-        bt_finalizar = (Button) findViewById(R.id.bt_finalizar);
+        setupSpinner();
 
-        bt_finalizar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateFields();
-            }
-        });
-
-        tv_foto.setOnClickListener(new View.OnClickListener() {
+        bt_foto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialogFotos();
@@ -116,89 +114,101 @@ public class CrearMascotaActivity extends AppCompatActivity {
             public void onClick(View v) {
                 image_1 = null;
                 rl_photo.setVisibility(View.GONE);
+                bt_foto.setVisibility(View.VISIBLE);
+            }
+        });
+
+        bt_publicar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                validateFields();
             }
         });
     }
 
+    private void setupSpinner() {
+        ArrayAdapter<String> adapter;
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, types);
+        sp_tipo.setAdapter(adapter);
+    }
+
     private void validateFields() {
         boolean cancel = false;
+        et_descripcion.setError(null);
+        tv_tipo_error.setVisibility(View.GONE);
 
-        et_nombre.setError(null);
-        et_edad.setError(null);
-        et_raza.setError(null);
-        et_peso.setError(null);
-
-        if(et_nombre.getText().toString().isEmpty()){
+        if (et_descripcion.getText().toString().isEmpty()) {
             cancel = true;
-            et_nombre.setText("Campo Requerido.");
+            et_descripcion.setError("Campo Requerido.");
         }
-        if(et_peso.getText().toString().isEmpty()){
+        if (sp_tipo.getSelectedItem().toString().equals(types[0])) {
             cancel = true;
-            et_peso.setText("Campo Requerido.");
-        }
-        if(et_edad.getText().toString().isEmpty()){
-            cancel = true;
-            et_edad.setText("Campo Requerido.");
-        }
-        if(et_raza.getText().toString().isEmpty()){
-            cancel = true;
-            et_raza.setText("Campo Requerido.");
+            tv_tipo_error.setVisibility(View.VISIBLE);
         }
 
-        if(!cancel){
-            createPetRequest();
+        if (!cancel) {
+            createPost();
         }
     }
 
-    private void createPetRequest(){
+    private void createPost() {
         pb.setVisibility(View.VISIBLE);
         ll_container.setVisibility(View.GONE);
 
         fotos = new ArrayList<>();
-        if(image_1 != null){
+
+        if (image_1 != null) {
             final RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), image_1);
             MultipartBody.Part body = MultipartBody.Part.createFormData("image", image_1.getName(), requestFile);
-            fotos.add(0,body);
+            fotos.add(0, body);
         }
-        Call<PetResponse> call = PetServicesApplication.getInstance().getServices().createPet(RequestBody.create(MediaType.parse("text/plain"),et_nombre.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),et_raza.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),et_edad.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),et_peso.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),manager.getUserId()),
+
+        Call<PostResponse> call = PetServicesApplication.getInstance().getServices().createPost(RequestBody.create(MediaType.parse("text/plain"), et_descripcion.getText().toString()),
+                RequestBody.create(MediaType.parse("text/plain"), sp_tipo.getSelectedItem().toString()),
+                RequestBody.create(MediaType.parse("text/plain"), manager.getUserId()),
                 fotos.size() != 0 ? fotos : null);
 
-        call.enqueue(new Callback<PetResponse>() {
+        call.enqueue(new Callback<PostResponse>() {
             @Override
-            public void onResponse(Call<PetResponse> call, Response<PetResponse> response) {
+            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
                 if(response.isSuccessful()){
-                    Intent i = new Intent(CrearMascotaActivity.this,HomeActivity.class);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(i);
+                    Toast.makeText(CrearPublicacionCliente.this,"Publicación creada con éxito.",Toast.LENGTH_SHORT).show();
+
+                    PostResponse postResponse = response.body();
+
+                    Intent result = new Intent();
+                    result.putExtra(Constants.EXTRA_POST_DESCRIPTION,postResponse.getDescription());
+                    result.putExtra(Constants.EXTRA_POST_TYPE,postResponse.getType());
+                    result.putExtra(Constants.EXTRA_POST_URL,postResponse.getImage().getUrl());
+                    result.putExtra(Constants.EXTRA_POST_USER_ID,postResponse.getUserId());
+                    setResult(RESULT_OK,result);
+                    finish();
                 }
                 pb.setVisibility(View.GONE);
                 ll_container.setVisibility(View.VISIBLE);
             }
 
             @Override
-            public void onFailure(Call<PetResponse> call, Throwable t) {
+            public void onFailure(Call<PostResponse> call, Throwable t) {
                 pb.setVisibility(View.GONE);
                 ll_container.setVisibility(View.VISIBLE);
-                Utils.showToastInternalServerError(CrearMascotaActivity.this);
+                Utils.showToastInternalServerError(CrearPublicacionCliente.this);
             }
         });
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == Activity.RESULT_OK){
+        if (resultCode == Activity.RESULT_OK) {
+            bt_foto.setVisibility(View.GONE);
             //when camera was openned
-            if(requestCode == Constants.CAMERA_REQUEST){
+            if (requestCode == Constants.CAMERA_REQUEST) {
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
                 image_1 = persistImage(photo);
                 setFotoIntoIv(photo);
             }
             //when gallery was openned
-            if(requestCode == Constants.REQUEST_IMAGE_GALLERY){
+            if (requestCode == Constants.REQUEST_IMAGE_GALLERY) {
                 Uri selectedImageUri = data.getData();
                 String picturePath = getRealPathFromURI(contentResolver, selectedImageUri);
                 Bitmap photo = BitmapFactory.decodeFile(picturePath);
@@ -264,9 +274,9 @@ public class CrearMascotaActivity extends AppCompatActivity {
             public void onClick(View v) {
                 dialog.dismiss();
 
-                if (ContextCompat.checkSelfPermission(CrearMascotaActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                if (ContextCompat.checkSelfPermission(CrearPublicacionCliente.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(CrearMascotaActivity.this,
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(CrearPublicacionCliente.this,
                             Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
                         // Show an expanation to the user *asynchronously* -- don't block
@@ -277,16 +287,16 @@ public class CrearMascotaActivity extends AppCompatActivity {
 
                         // No explanation needed, we can request the permission.
 
-                        ActivityCompat.requestPermissions(CrearMascotaActivity.this,
-                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},2);
+                        ActivityCompat.requestPermissions(CrearPublicacionCliente.this,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 2);
 
                         // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                         // app-defined int constant. The callback method gets the
                         // result of the request.
                     }
-                }else{
+                } else {
                     Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    if (photoPickerIntent.resolveActivity(CrearMascotaActivity.this.getPackageManager()) != null) {
+                    if (photoPickerIntent.resolveActivity(CrearPublicacionCliente.this.getPackageManager()) != null) {
                         photoPickerIntent.setType("image/*");
                         startActivityForResult(photoPickerIntent, Constants.REQUEST_IMAGE_GALLERY);
                     }

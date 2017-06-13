@@ -1,6 +1,15 @@
 <resources>
     <string name="app_name">PetServices</string>
 
+    <string name="facebook_app_id">817257211774711</string>
+    <string name="rol_persona">817257211774711</string>
+    <string name="rol_organizacion">817257211774711</string>
+
+    <string name="internal_server_error">Internal Server Error.</string>
+    <string name="ok_label">Ok</string>
+    <string name="cancel_label">Cancel</string>
+    <string name="ask_for_permission_sign_in">Please allow permission(s) to continue. We need access to your gallery.</string>
+
     <!--Login-->
     <string name="et_user">Usuario</string>
     <string name="et_pass">Password</string>
@@ -11,4 +20,11 @@
     <string name="sign_up_title">REGISTRO</string>
     <string name="bt_user">Persona</string>
     <string name="bt_company">Empresa</string>
+
+    <string-array name="sp_tipo_post">
+        <item>Tipo de Publicación</item>
+        <item>Adopción</item>
+        <item>Pérdida</item>
+        <item>Otro tipo</item>
+    </string-array>
 </resources>

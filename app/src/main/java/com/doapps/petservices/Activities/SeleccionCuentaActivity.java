@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.doapps.petservices.R;
+import com.doapps.petservices.Utils.Constants;
 
 public class SeleccionCuentaActivity extends AppCompatActivity {
 
@@ -23,14 +24,18 @@ public class SeleccionCuentaActivity extends AppCompatActivity {
         bt_persona.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SeleccionCuentaActivity.this,CrearCuentaPersonaActivity.class));
+                Intent i = new Intent(SeleccionCuentaActivity.this,CrearCuentaActivity.class);
+                i.putExtra(Constants.SIGN_UP_PERSONA,true);
+                startActivity(i);
             }
         });
 
         bt_empresa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SeleccionCuentaActivity.this,CrearCuentaEmpresaActivity.class));
+                Intent i = new Intent(SeleccionCuentaActivity.this,CrearCuentaActivity.class);
+                i.putExtra(Constants.SIGN_UP_EMPRESA,true);
+                startActivity(i);
             }
         });
     }

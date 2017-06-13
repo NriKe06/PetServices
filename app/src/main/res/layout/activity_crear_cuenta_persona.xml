@@ -3,103 +3,116 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_crear_cuenta_persona"
-    tools:context="com.doapps.petservices.Activities.CrearCuentaPersonaActivity"
+    android:fillViewport="true"
+    tools:context="com.doapps.petservices.Activities.CrearCuentaActivity"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_marginTop="20dp"
-            android:gravity="center_horizontal"
-            android:textStyle="bold"
-            android:textSize="20sp"
+        <LinearLayout
+            android:id="@+id/ll_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="REGISTRO"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_marginTop="20dp"
+                android:gravity="center_horizontal"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="REGISTRO"/>
 
-        <EditText
-            android:id="@+id/et_nombre"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginStart="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Nombres"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp">
 
-        <EditText
-            android:id="@+id/et_apellidos"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginStart="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Apellidos"/>
+                <EditText
+                    android:layout_weight="1"
+                    android:id="@+id/et_nombre"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
 
-        <EditText
-            android:id="@+id/et_correo"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginStart="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Correo"/>
+                <EditText
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:id="@+id/et_apellidos"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
 
+            </LinearLayout>
 
-        <EditText
-            android:id="@+id/et_dni"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginStart="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="DNI"/>
+            <EditText
+                android:id="@+id/et_email"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Correo"/>
 
-        <EditText
-            android:id="@+id/et_nacimiento"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginStart="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Fecha de Nacimiento"/>
+            <EditText
+                android:id="@+id/et_phone"
+                android:inputType="number"
+                android:maxLength="9"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Teléfono"/>
 
-        <EditText
-            android:id="@+id/et_telefono"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginStart="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Telefono"/>
-
-        <EditText
-            android:id="@+id/et_usuario"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginStart="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Usuario"/>
-
-        <EditText
-            android:id="@+id/et_password"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginStart="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Contraseña"/>
+            <EditText
+                android:inputType="textPassword"
+                android:id="@+id/et_password"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Contraseña"/>
 
 
-        <Button
-            android:id="@+id/bt_siguiente"
-            android:layout_marginTop="30dp"
-            android:text="Continuar"
-            android:layout_width="match_parent"
+            <Button
+                android:id="@+id/bt_siguiente"
+                android:layout_marginTop="30dp"
+                android:text="Continuar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp"/>
+
+            <TextView
+                android:gravity="center"
+                android:text="O"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/bt_fb"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <ProgressBar
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            android:id="@+id/pb"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-    </LinearLayout>
+    </RelativeLayout>
+
 
 </ScrollView>
