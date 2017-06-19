@@ -63,6 +63,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
 
     public class MyHolder extends RecyclerView.ViewHolder{
 
+        ImageView iv_profile;
+        TextView tv_date;
         TextView tv_name;
         TextView tv_post;
         ImageView iv_photo;
@@ -70,8 +72,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
         public MyHolder(View itemView) {
             super(itemView);
             iv_photo = (ImageView) itemView.findViewById(R.id.iv_photo);
+            iv_profile = (ImageView) itemView.findViewById(R.id.iv_profile);
             tv_name = (TextView) itemView.findViewById(R.id.tv_name);
             tv_post = (TextView) itemView.findViewById(R.id.tv_post);
+            tv_date = (TextView) itemView.findViewById(R.id.tv_date);
         }
     }
 }

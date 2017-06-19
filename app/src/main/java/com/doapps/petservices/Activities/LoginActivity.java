@@ -198,6 +198,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if(response.isSuccessful()){
+                    manager.setUserId(response.body().getUserId());
+                    manager.setUserName(et_user.getText().toString());
                     startActivity(new Intent(LoginActivity.this,HomeActivity.class));
                     finish();
                 }else{

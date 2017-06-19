@@ -11,6 +11,7 @@ public class PreferenceManager {
 
     private static final String PREFERENCES_NAME = "petServices";
     private static final String USER_ID = "user_id";
+    private static final String USER_NAME = "user_name";
 
     private static PreferenceManager self;
     private final SharedPreferences mPreferences;
@@ -37,5 +38,15 @@ public class PreferenceManager {
 
     public String getUserId(){
         return mPreferences.getString(USER_ID, "");
+    }
+
+    public void setUserName(String name){
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putString(USER_NAME, name);
+        editor.apply();
+    }
+
+    public String getUserName(){
+        return mPreferences.getString(USER_NAME, "");
     }
 }
