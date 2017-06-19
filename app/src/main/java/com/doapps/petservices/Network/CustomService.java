@@ -64,4 +64,8 @@ public interface CustomService {
                                     @Part("email") RequestBody documentType,
                                     @Part("id") RequestBody documentNumber,
                                     @Part ArrayList<MultipartBody.Part> picture);
+
+    @FormUrlEncoded
+    @POST(Urls.LIKE)
+    Call<Void> like(@Field("idPublicacion") String idPublicacion, @Field("idUsuario") String idUsuario);
 }

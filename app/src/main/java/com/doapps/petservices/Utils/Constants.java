@@ -15,6 +15,7 @@ public class Constants {
     public static final String EXTRA_POST_DESCRIPTION = "extra_post_description";
     public static final String EXTRA_POST_TYPE = "extra_post_type";
     public static final String EXTRA_POST_USER_ID = "extra_post_user_id";
+    public static final String EXTRA_POST_DATE = "extra_post_date";
     public static final String EXTRA_POST_URL = "extra_post_url";
     public static final String EXTRA_PHOTO = "extra_photo";
 }

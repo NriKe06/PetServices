@@ -23,8 +23,8 @@
 
     <string-array name="sp_tipo_post">
         <item>Tipo de Publicación</item>
-        <item>Adopción</item>
-        <item>Pérdida</item>
+        <item>Adopcion</item>
+        <item>Perdida</item>
         <item>Otro tipo</item>
     </string-array>
 </resources>

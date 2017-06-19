@@ -181,6 +181,7 @@ public class CrearPublicacionCliente extends AppCompatActivity {
                     result.putExtra(Constants.EXTRA_POST_TYPE,postResponse.getType());
                     result.putExtra(Constants.EXTRA_POST_URL,postResponse.getImage().getUrl());
                     result.putExtra(Constants.EXTRA_POST_USER_ID,postResponse.getUserId());
+                    result.putExtra(Constants.EXTRA_POST_DATE,postResponse.getDate());
                     setResult(RESULT_OK,result);
                     finish();
                 }

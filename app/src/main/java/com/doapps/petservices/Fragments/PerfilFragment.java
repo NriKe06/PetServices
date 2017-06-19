@@ -143,6 +143,7 @@ public class PerfilFragment extends Fragment {
                 photo.setUrl(data.getStringExtra(Constants.EXTRA_POST_URL));
                 postResponse.setImage(photo);
                 postResponse.setType(data.getStringExtra(Constants.EXTRA_POST_TYPE));
+                postResponse.setDate(data.getStringExtra(Constants.EXTRA_POST_DATE));
                 adapter.addPost(postResponse);
             }
             if(requestCode == Constants.UPDATE_USER_REQUEST){

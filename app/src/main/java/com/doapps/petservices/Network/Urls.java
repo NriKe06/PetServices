@@ -11,4 +11,5 @@ interface Urls {
     String CREATE_PET = "pets";
     String CREATE_POST = "publication_users/createPublication";
     String GET_USER_POST = "publication_users";
+    String LIKE = "publication_users/updateLike";
 }

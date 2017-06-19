@@ -1,17 +1,23 @@
 package com.doapps.petservices.Network.Models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by NriKe on 12/06/2017.
  */
 
 public class PostResponse implements Serializable{
+    private String name;
     private String description;
     private String type;
     private String id;
     private String userId;
+    private String date;
+    private String picture;
     private Photo image;
+    private List<String> like = new ArrayList<>();
 
     public String getDescription() {
         return description;
@@ -53,5 +59,35 @@ public class PostResponse implements Serializable{
         this.image = image;
     }
 
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public List<String> getLike() {
+        return like;
+    }
+
+    public void setLike(List<String> like) {
+        this.like = like;
+    }
 }
