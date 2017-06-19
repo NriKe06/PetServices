@@ -19,29 +19,40 @@
         <activity
             android:name=".Activities.LoginActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity android:name=".Activities.HomeActivity" />
-        <activity android:name=".Activities.SeleccionCuentaActivity" />
-        <activity android:name=".Activities.CrearCuentaActivity" />
-        <activity android:name=".Activities.CrearMascotaActivity" />
-        <activity android:name=".Activities.MainActivity" />
+        <activity
+            android:name=".Activities.SeleccionCuentaActivity"
+            android:theme="@style/AppTheme.NoTitle" />
+        <activity
+            android:name=".Activities.CrearCuentaActivity"
+            android:theme="@style/AppTheme.NoTitle" />
+        <activity
+            android:name=".Activities.CrearMascotaActivity"
+            android:theme="@style/AppTheme.NoTitle" />
+        <activity
+            android:name=".Activities.MainActivity"
+            android:theme="@style/AppTheme.NoTitle" />
         <activity android:name=".Activities.MessageDetailActivity" />
         <activity android:name=".Activities.ListaMascotasActivity" />
         <activity android:name=".Activities.CrearPublicacionCliente" />
-        <activity android:name=".Activities.PetFlash">
+        <activity
+            android:name=".Activities.PetFlash"
+            android:theme="@style/AppTheme.NoTitle">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Activities.UpdateAccount"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".Activities.PhotoActivity"/>
     </application>
 
 </manifest>

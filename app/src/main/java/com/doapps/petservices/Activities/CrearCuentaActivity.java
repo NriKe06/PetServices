@@ -169,6 +169,9 @@ public class CrearCuentaActivity extends AppCompatActivity {
             public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
                 if(response.isSuccessful()){
                     manager.setUserId(response.body().getId());
+                    manager.setName(response.body().getName());
+                    manager.setLastName(response.body().getLast_name());
+                    manager.setUserName(response.body().getUsername());
                     startActivity(new Intent(CrearCuentaActivity.this,CrearMascotaActivity.class));
                     finish();
                 }

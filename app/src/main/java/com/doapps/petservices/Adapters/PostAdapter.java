@@ -1,6 +1,7 @@
 package com.doapps.petservices.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.compat.BuildConfig;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,9 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.doapps.petservices.Activities.PhotoActivity;
 import com.doapps.petservices.Models.Post;
 import com.doapps.petservices.Network.Models.PostResponse;
 import com.doapps.petservices.R;
+import com.doapps.petservices.Utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -45,7 +48,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
     }
 
     @Override
-    public void onBindViewHolder(MyHolder holder, int position) {
+    public void onBindViewHolder(MyHolder holder, final int position) {
         holder.tv_name.setText("NAME TEST");
         holder.tv_post.setText(data.get(position).getDescription());
         if(data.get(position).getImage() != null){
@@ -54,6 +57,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
         }else{
             holder.iv_photo.setVisibility(View.GONE);
         }
+        holder.iv_photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(context, PhotoActivity.class);
+                i.putExtra(Constants.EXTRA_PHOTO,data.get(position).getImage().getUrl());
+                context.startActivity(i);
+            }
+        });
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -19,49 +20,62 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.doapps.petservices.Network.Models.PetResponse;
+import com.doapps.petservices.Network.Models.SignUpResponse;
 import com.doapps.petservices.PetServicesApplication;
 import com.doapps.petservices.R;
 import com.doapps.petservices.Utils.Constants;
 import com.doapps.petservices.Utils.PreferenceManager;
 import com.doapps.petservices.Utils.Utils;
+import com.facebook.CallbackManager;
+import com.facebook.login.widget.LoginButton;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CrearMascotaActivity extends AppCompatActivity {
+public class UpdateAccount extends AppCompatActivity {
 
-    private EditText et_nombre;
-    private EditText et_edad;
-    private EditText et_raza;
-    private EditText et_peso;
-    private TextView tv_foto;
-    private RelativeLayout rl_photo;
-    private ImageView iv_photo;
-    private ImageView iv_remove;
-    private LinearLayout ll_container;
-    private ProgressBar pb;
-
-    private Button bt_finalizar;
+    @BindView(R.id.iv_photo)
+    ImageView iv_photo;
+    @BindView(R.id.tv_photo)
+    TextView tv_photo;
+    @BindView(R.id.et_nombre)
+    EditText et_nombre;
+    @BindView(R.id.et_apellidos)
+    EditText et_apellidos;
+    @BindView(R.id.et_email)
+    EditText et_email;
+    @BindView(R.id.et_phone)
+    EditText et_phone;
+    @BindView(R.id.ll_container)
+    LinearLayout ll_container;
+    @BindView(R.id.pb)
+    ProgressBar pb;
 
     private PreferenceManager manager;
 
@@ -74,83 +88,26 @@ public class CrearMascotaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_crear_mascota);
-
+        setContentView(R.layout.activity_update_account);
+        ButterKnife.bind(this);
         contentResolver = getContentResolver();
-
         manager = PreferenceManager.getInstance(this);
-
         setupViews();
     }
 
-    private void setupViews(){
-        et_nombre = (EditText) findViewById(R.id.et_nombre);
-        et_edad = (EditText) findViewById(R.id.et_edad);
-        et_raza = (EditText) findViewById(R.id.et_raza);
-        et_peso = (EditText) findViewById(R.id.et_peso);
-        tv_foto = (TextView) findViewById(R.id.tv_foto);
-        rl_photo = (RelativeLayout) findViewById(R.id.rl_photo);
-        iv_photo = (ImageView) findViewById(R.id.iv_photo);
-        iv_remove = (ImageView) findViewById(R.id.iv_remove);
-        ll_container = (LinearLayout) findViewById(R.id.ll_container);
-        pb = (ProgressBar) findViewById(R.id.pb);
+    private void setupViews() {
+        et_nombre.setText(manager.getName());
+        et_apellidos.setText(manager.getLastName());
+        et_email.setText(manager.getUserMail());
+        et_phone.setText(manager.getUserPhone());
 
-        bt_finalizar = (Button) findViewById(R.id.bt_finalizar);
-
-        bt_finalizar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateFields();
-            }
-        });
-
-        tv_foto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialogFotos();
-            }
-        });
-
-        iv_remove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                image_1 = null;
-                rl_photo.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    private void validateFields() {
-        boolean cancel = false;
-
-        et_nombre.setError(null);
-        et_edad.setError(null);
-        et_raza.setError(null);
-        et_peso.setError(null);
-
-        if(et_nombre.getText().toString().isEmpty()){
-            cancel = true;
-            et_nombre.setText("Campo Requerido.");
-        }
-        if(et_peso.getText().toString().isEmpty()){
-            cancel = true;
-            et_peso.setText("Campo Requerido.");
-        }
-        if(et_edad.getText().toString().isEmpty()){
-            cancel = true;
-            et_edad.setText("Campo Requerido.");
-        }
-        if(et_raza.getText().toString().isEmpty()){
-            cancel = true;
-            et_raza.setText("Campo Requerido.");
-        }
-
-        if(!cancel){
-            createPetRequest();
+        if(!manager.getUserPhoto().isEmpty()){
+            Picasso.with(this).load(manager.getUserPhoto()).into(iv_photo);
         }
     }
 
-    private void createPetRequest(){
+    @OnClick(R.id.bt_update)
+    public void bt_update_on_click(){
         pb.setVisibility(View.VISIBLE);
         ll_container.setVisibility(View.GONE);
 
@@ -160,32 +117,50 @@ public class CrearMascotaActivity extends AppCompatActivity {
             MultipartBody.Part body = MultipartBody.Part.createFormData("image", image_1.getName(), requestFile);
             fotos.add(0,body);
         }
-        Call<PetResponse> call = PetServicesApplication.getInstance().getServices().createPet(RequestBody.create(MediaType.parse("text/plain"),et_nombre.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),et_raza.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),et_edad.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),et_peso.getText().toString()),
+
+        Map<String, String> map = new HashMap<>();
+        map.put("id", manager.getUserId());
+
+        Call<SignUpResponse> call = PetServicesApplication.getInstance().getServices().updateUser(map,RequestBody.create(MediaType.parse("text/plain"),et_nombre.getText().toString()),
+                RequestBody.create(MediaType.parse("text/plain"),et_apellidos.getText().toString()),
+                RequestBody.create(MediaType.parse("text/plain"),et_phone.getText().toString()),
+                RequestBody.create(MediaType.parse("text/plain"),et_email.getText().toString()),
                 RequestBody.create(MediaType.parse("text/plain"),manager.getUserId()),
                 fotos.size() != 0 ? fotos : null);
 
-        call.enqueue(new Callback<PetResponse>() {
+        call.enqueue(new Callback<SignUpResponse>() {
             @Override
-            public void onResponse(Call<PetResponse> call, Response<PetResponse> response) {
+            public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
                 if(response.isSuccessful()){
-                    Intent i = new Intent(CrearMascotaActivity.this,HomeActivity.class);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(i);
+                    Utils.showToast(getApplicationContext(),"Usuario Actualizado");
+                    manager.setName(response.body().getName());
+                    manager.setLastName(response.body().getLast_name());
+                    manager.setUserPhone(response.body().getPicture());
+                    manager.setUserMail(response.body().getEmail());
+                    manager.setUserPhone(response.body().getPhone());
                 }
                 pb.setVisibility(View.GONE);
                 ll_container.setVisibility(View.VISIBLE);
             }
 
             @Override
-            public void onFailure(Call<PetResponse> call, Throwable t) {
+            public void onFailure(Call<SignUpResponse> call, Throwable t) {
                 pb.setVisibility(View.GONE);
                 ll_container.setVisibility(View.VISIBLE);
-                Utils.showToastInternalServerError(CrearMascotaActivity.this);
             }
         });
+
+        SignUpResponse user= new SignUpResponse();
+        user.setName(et_nombre.getText().toString());
+        user.setLast_name(et_apellidos.getText().toString());
+        user.setPhone(et_phone.getText().toString());
+        user.setEmail(et_email.getText().toString());
+
+    }
+
+    @OnClick(R.id.tv_photo)
+    public void tv_photo_click(){
+        showDialogFotos();
     }
 
     @Override
@@ -210,7 +185,6 @@ public class CrearMascotaActivity extends AppCompatActivity {
 
     private void setFotoIntoIv(Bitmap photo) {
         iv_photo.setImageBitmap(photo);
-        rl_photo.setVisibility(View.VISIBLE);
     }
 
     private void showDialogFotos() {
@@ -235,19 +209,19 @@ public class CrearMascotaActivity extends AppCompatActivity {
             public void onClick(View v) {
                 dialog.dismiss();
 
-                if (ContextCompat.checkSelfPermission(CrearMascotaActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                if (ContextCompat.checkSelfPermission(UpdateAccount.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(CrearMascotaActivity.this,
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(UpdateAccount.this,
                             Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
                     } else {
 
-                        ActivityCompat.requestPermissions(CrearMascotaActivity.this,
+                        ActivityCompat.requestPermissions(UpdateAccount.this,
                                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},2);
                     }
                 }else{
                     Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    if (photoPickerIntent.resolveActivity(CrearMascotaActivity.this.getPackageManager()) != null) {
+                    if (photoPickerIntent.resolveActivity(UpdateAccount.this.getPackageManager()) != null) {
                         photoPickerIntent.setType("image/*");
                         startActivityForResult(photoPickerIntent, Constants.REQUEST_IMAGE_GALLERY);
                     }
@@ -256,5 +230,4 @@ public class CrearMascotaActivity extends AppCompatActivity {
         });
         dialog.show();
     }
-
 }

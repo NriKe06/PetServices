@@ -11,8 +11,10 @@ public class Constants {
     public static final int CAMERA_REQUEST = 1;
     public static final int REQUEST_IMAGE_GALLERY = 2;
     public static final int CREATE_POST_REQUEST = 3;
+    public static final int UPDATE_USER_REQUEST = 4;
     public static final String EXTRA_POST_DESCRIPTION = "extra_post_description";
     public static final String EXTRA_POST_TYPE = "extra_post_type";
     public static final String EXTRA_POST_USER_ID = "extra_post_user_id";
     public static final String EXTRA_POST_URL = "extra_post_url";
+    public static final String EXTRA_PHOTO = "extra_photo";
 }

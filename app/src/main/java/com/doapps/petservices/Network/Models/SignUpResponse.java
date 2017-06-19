@@ -15,6 +15,7 @@ public class SignUpResponse {
     String email;
     boolean emailVerified;
     String id;
+    String picture;
 
     public String getName() {
         return name;
@@ -94,5 +95,13 @@ public class SignUpResponse {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 }

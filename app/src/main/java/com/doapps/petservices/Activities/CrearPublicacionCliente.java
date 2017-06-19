@@ -204,15 +204,15 @@ public class CrearPublicacionCliente extends AppCompatActivity {
             //when camera was openned
             if (requestCode == Constants.CAMERA_REQUEST) {
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
-                image_1 = persistImage(photo);
+                image_1 = Utils.persistImage(photo,getApplicationContext());
                 setFotoIntoIv(photo);
             }
             //when gallery was openned
             if (requestCode == Constants.REQUEST_IMAGE_GALLERY) {
                 Uri selectedImageUri = data.getData();
-                String picturePath = getRealPathFromURI(contentResolver, selectedImageUri);
+                String picturePath = Utils.getRealPathFromURI(contentResolver, selectedImageUri);
                 Bitmap photo = BitmapFactory.decodeFile(picturePath);
-                image_1 = persistImage(photo);
+                image_1 = Utils.persistImage(photo,getApplicationContext());
                 setFotoIntoIv(photo);
             }
         }
@@ -221,35 +221,6 @@ public class CrearPublicacionCliente extends AppCompatActivity {
     private void setFotoIntoIv(Bitmap photo) {
         iv_photo.setImageBitmap(photo);
         rl_photo.setVisibility(View.VISIBLE);
-    }
-
-    public static String getRealPathFromURI(ContentResolver contentResolver, Uri uri) {
-        Cursor cursor = contentResolver.query(uri, null, null, null, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-            int indexColumn = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            return cursor.getString(indexColumn);
-        }
-        return null;
-    }
-
-    //save imagen into file
-    private File persistImage(Bitmap bitmap) {
-        File filesDir = getApplicationContext().getFilesDir();
-        final String name = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
-        File imageFile = new File(filesDir, name + ".jpg");
-
-        OutputStream os;
-        try {
-            os = new FileOutputStream(imageFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
-            os.flush();
-            os.close();
-            return imageFile;
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Error writing bitmap", e);
-            return null;
-        }
     }
 
     private void showDialogFotos() {
