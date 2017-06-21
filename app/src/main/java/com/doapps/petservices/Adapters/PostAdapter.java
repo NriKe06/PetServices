@@ -21,7 +21,9 @@ import com.doapps.petservices.Utils.PreferenceManager;
 import com.doapps.petservices.Utils.Utils;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -105,7 +107,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
             holder.tv_like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Call<Void> call = PetServicesApplication.getInstance().getServices().like(data.get(position).getId(),manager.getUserId());
+
+                    Map<String, String> map = new HashMap<>();
+                    map.put("idPublicacion", data.get(position).getId());
+                    map.put("idUsuario", manager.getUserId());
+
+                    Call<Void> call = PetServicesApplication.getInstance().getServices().like(map);
 
                     call.enqueue(new Callback<Void>() {
                         @Override
