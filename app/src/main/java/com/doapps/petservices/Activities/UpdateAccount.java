@@ -134,6 +134,7 @@ public class UpdateAccount extends AppCompatActivity {
                     manager.setUserPhone(response.body().getPicture());
                     manager.setUserMail(response.body().getEmail());
                     manager.setUserPhone(response.body().getPhone());
+                    finish();
                 }
                 pb.setVisibility(View.GONE);
                 ll_container.setVisibility(View.VISIBLE);

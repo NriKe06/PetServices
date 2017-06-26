@@ -70,10 +70,7 @@ public class PerfilFragment extends Fragment {
     }
 
     private void getUserPost() {
-        Map<String, String> map = new HashMap<>();
-        map.put("id", manager.getUserId());
-
-        Call<ArrayList<PostResponse>> call = PetServicesApplication.getInstance().getServices().getUserPosts(map);
+        Call<ArrayList<PostResponse>> call = PetServicesApplication.getInstance().getServices().getUserPosts(manager.getUserId());
 
         call.enqueue(new Callback<ArrayList<PostResponse>>() {
             @Override

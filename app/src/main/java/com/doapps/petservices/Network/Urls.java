@@ -10,7 +10,7 @@ interface Urls {
     String UPDATE_USER = "users/updateUser";
     String CREATE_PET = "pets";
     String CREATE_POST = "publication_users/createPublication";
-    String GET_USER_POST = "publication_users";
+    String GET_USER_POST = "publication_users/getPublication";
     String LIKE = "publication_users/updateLike";
     String DISLIKE = "publication_users/DisLike";
 }

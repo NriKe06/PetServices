@@ -22,6 +22,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
+import retrofit2.http.Query;
 
 public interface CustomService {
     @POST(Urls.LOGIN)
@@ -50,7 +51,7 @@ public interface CustomService {
             , @Part ArrayList<MultipartBody.Part> image);
 
     @GET(Urls.GET_USER_POST)
-    Call<ArrayList<PostResponse>> getUserPosts(@HeaderMap Map<String, String> headers);
+    Call<ArrayList<PostResponse>> getUserPosts(@Query("idUser") String id);
 
     @GET(Urls.GET_USER_POST)
     Call<ArrayList<PostResponse>> getAllPost();
