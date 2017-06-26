@@ -70,4 +70,7 @@ public interface CustomService {
 
     @POST(Urls.DISLIKE)
     Call<Void> dislike(@HeaderMap Map<String, String> headers);
+
+    @GET(Urls.FILTER_POST)
+    Call<ArrayList<PostResponse>> filterPost(@HeaderMap Map<String, String> headers);
 }

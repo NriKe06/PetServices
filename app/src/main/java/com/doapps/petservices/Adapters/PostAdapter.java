@@ -50,12 +50,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
         this.rv = rv;
     }
 
-    public void addPost(PostResponse post){
-        data.add(post);
-        notifyDataSetChanged();
-        rv.scrollToPosition(data.size()-1);
-    }
-
     @Override
     public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layout = R.layout.row_publicacion;
@@ -78,7 +72,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
         }
 
         if(data.get(position).getPicture() != null && !data.get(position).getPicture().isEmpty()){
-            Picasso.with(context).load(data.get(position).getPicture()).into(holder.iv_profile);
+            String newUrl = data.get(position).getPicture().substring(0, 4) + "s" + data.get(position).getPicture().substring(4, data.get(position).getPicture().length());
+            Picasso.with(context).load(newUrl).into(holder.iv_profile);
         }else{
             holder.iv_profile.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.empty));
         }

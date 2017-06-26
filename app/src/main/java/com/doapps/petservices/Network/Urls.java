@@ -13,4 +13,5 @@ interface Urls {
     String GET_USER_POST = "publication_users/getPublication";
     String LIKE = "publication_users/updateLike";
     String DISLIKE = "publication_users/DisLike";
+    String FILTER_POST = "publication_users/getPublicationType";
 }
