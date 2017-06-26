@@ -48,7 +48,6 @@ public class PerfilFragment extends Fragment {
     private RecyclerView rv_my_post;
     private PostAdapter adapter;
     private TextView tv_pets;
-    private TextView tv_post;
     private ImageView iv_photo;
     private TextView tv_username;
     private com.github.clans.fab.FloatingActionButton menu_edit;
@@ -94,7 +93,6 @@ public class PerfilFragment extends Fragment {
     private void setupViews(View v) {
         rv_my_post = (RecyclerView) v.findViewById(R.id.rv_my_post);
         tv_pets = (TextView) v.findViewById(R.id.tv_pets);
-        tv_post = (TextView) v.findViewById(R.id.tv_post);
         iv_photo = (ImageView) v.findViewById(R.id.iv_photo);
         tv_username = (TextView) v.findViewById(R.id.tv_username);
         menu_edit = (com.github.clans.fab.FloatingActionButton) v.findViewById(R.id.menu_edit);
