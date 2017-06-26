@@ -56,16 +56,17 @@ public interface CustomService {
     Call<ArrayList<PostResponse>> getAllPost();
 
     @Multipart
-    @PUT(Urls.UPDATE_USER)
+    @POST(Urls.UPDATE_USER)
     Call<SignUpResponse> updateUser(@HeaderMap Map<String, String> headers,
                                     @Part("name") RequestBody firstname,
                                     @Part("last_name") RequestBody lastname,
                                     @Part("phone") RequestBody secondSurname,
-                                    @Part("email") RequestBody documentType,
                                     @Part("id") RequestBody documentNumber,
                                     @Part ArrayList<MultipartBody.Part> picture);
 
-    @FormUrlEncoded
     @POST(Urls.LIKE)
-    Call<Void> like(@Field("idPublicacion") String idPublicacion, @Field("idUsuario") String idUsuario);
+    Call<Void> like(@HeaderMap Map<String, String> headers);
+
+    @POST(Urls.DISLIKE)
+    Call<Void> dislike(@HeaderMap Map<String, String> headers);
 }

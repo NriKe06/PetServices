@@ -72,7 +72,7 @@ public class PublicacionesFragment extends Fragment {
     }
 
     private void setupRv(ArrayList<PostResponse> body){
-        adapter = new PostAdapter(getActivity(),body);
+        adapter = new PostAdapter(getActivity(),body,null);
         rv_post.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv_post.setAdapter(adapter);
     }

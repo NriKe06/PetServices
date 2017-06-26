@@ -68,8 +68,6 @@ public class UpdateAccount extends AppCompatActivity {
     EditText et_nombre;
     @BindView(R.id.et_apellidos)
     EditText et_apellidos;
-    @BindView(R.id.et_email)
-    EditText et_email;
     @BindView(R.id.et_phone)
     EditText et_phone;
     @BindView(R.id.ll_container)
@@ -98,7 +96,6 @@ public class UpdateAccount extends AppCompatActivity {
     private void setupViews() {
         et_nombre.setText(manager.getName());
         et_apellidos.setText(manager.getLastName());
-        et_email.setText(manager.getUserMail());
         et_phone.setText(manager.getUserPhone());
 
         if(!manager.getUserPhoto().isEmpty()){
@@ -124,7 +121,6 @@ public class UpdateAccount extends AppCompatActivity {
         Call<SignUpResponse> call = PetServicesApplication.getInstance().getServices().updateUser(map,RequestBody.create(MediaType.parse("text/plain"),et_nombre.getText().toString()),
                 RequestBody.create(MediaType.parse("text/plain"),et_apellidos.getText().toString()),
                 RequestBody.create(MediaType.parse("text/plain"),et_phone.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),et_email.getText().toString()),
                 RequestBody.create(MediaType.parse("text/plain"),manager.getUserId()),
                 fotos.size() != 0 ? fotos : null);
 
@@ -154,7 +150,6 @@ public class UpdateAccount extends AppCompatActivity {
         user.setName(et_nombre.getText().toString());
         user.setLast_name(et_apellidos.getText().toString());
         user.setPhone(et_phone.getText().toString());
-        user.setEmail(et_email.getText().toString());
 
     }
 

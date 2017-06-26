@@ -72,16 +72,6 @@
 
             <EditText
                 android:singleLine="true"
-                android:id="@+id/et_email"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="30dp"
-                android:layout_marginStart="30dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Correo"/>
-
-            <EditText
-                android:singleLine="true"
                 android:id="@+id/et_phone"
                 android:inputType="number"
                 android:maxLength="9"

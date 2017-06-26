@@ -49,9 +49,10 @@ public class PerfilFragment extends Fragment {
     private PostAdapter adapter;
     private TextView tv_pets;
     private TextView tv_post;
-    private FloatingActionButton fab;
     private ImageView iv_photo;
     private TextView tv_username;
+    private com.github.clans.fab.FloatingActionButton menu_edit;
+    private com.github.clans.fab.FloatingActionButton menu_add;
 
     private PreferenceManager manager;
 
@@ -94,9 +95,10 @@ public class PerfilFragment extends Fragment {
         rv_my_post = (RecyclerView) v.findViewById(R.id.rv_my_post);
         tv_pets = (TextView) v.findViewById(R.id.tv_pets);
         tv_post = (TextView) v.findViewById(R.id.tv_post);
-        fab = (FloatingActionButton) v.findViewById(R.id.fab);
         iv_photo = (ImageView) v.findViewById(R.id.iv_photo);
         tv_username = (TextView) v.findViewById(R.id.tv_username);
+        menu_edit = (com.github.clans.fab.FloatingActionButton) v.findViewById(R.id.menu_edit);
+        menu_add = (com.github.clans.fab.FloatingActionButton) v.findViewById(R.id.menu_add);
 
         tv_username.setText(manager.getName());
 
@@ -104,7 +106,7 @@ public class PerfilFragment extends Fragment {
             Picasso.with(getActivity()).load(manager.getUserPhoto()).into(iv_photo);
         }
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        menu_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivityForResult(new Intent(getActivity(), UpdateAccount.class), Constants.UPDATE_USER_REQUEST);
@@ -118,7 +120,7 @@ public class PerfilFragment extends Fragment {
             }
         });
 
-        tv_post.setOnClickListener(new View.OnClickListener() {
+        menu_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivityForResult(new Intent(getActivity(), CrearPublicacionCliente.class), Constants.CREATE_POST_REQUEST);
@@ -127,7 +129,7 @@ public class PerfilFragment extends Fragment {
     }
 
     private void setupRv(ArrayList<PostResponse> body) {
-        adapter = new PostAdapter(getActivity(), body);
+        adapter = new PostAdapter(getActivity(), body, rv_my_post);
         rv_my_post.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv_my_post.setAdapter(adapter);
     }
@@ -136,15 +138,7 @@ public class PerfilFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == Constants.CREATE_POST_REQUEST) {
-                PostResponse postResponse = new PostResponse();
-                postResponse.setDescription(data.getStringExtra(Constants.EXTRA_POST_DESCRIPTION));
-                postResponse.setUserId(data.getStringExtra(Constants.EXTRA_POST_USER_ID));
-                Photo photo = new Photo();
-                photo.setUrl(data.getStringExtra(Constants.EXTRA_POST_URL));
-                postResponse.setImage(photo);
-                postResponse.setType(data.getStringExtra(Constants.EXTRA_POST_TYPE));
-                postResponse.setDate(data.getStringExtra(Constants.EXTRA_POST_DATE));
-                adapter.addPost(postResponse);
+                getUserPost();
             }
             if(requestCode == Constants.UPDATE_USER_REQUEST){
                 if(!manager.getUserPhoto().isEmpty()){

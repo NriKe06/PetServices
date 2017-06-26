@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.compat.BuildConfig;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,9 @@ import com.doapps.petservices.Utils.PreferenceManager;
 import com.doapps.petservices.Utils.Utils;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,17 +40,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
     List<PostResponse> data;
     private final LayoutInflater inflater;
     private PreferenceManager manager;
+    private RecyclerView rv;
 
-    public PostAdapter(Context context, List<PostResponse> data) {
+    public PostAdapter(Context context, List<PostResponse> data, RecyclerView rv) {
         this.context = context;
         this.data = data;
         inflater = LayoutInflater.from(context);
         manager = PreferenceManager.getInstance(context);
+        this.rv = rv;
     }
 
     public void addPost(PostResponse post){
         data.add(post);
         notifyDataSetChanged();
+        rv.scrollToPosition(data.size()-1);
     }
 
     @Override
@@ -66,7 +72,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
         holder.tv_date.setText(data.get(position).getDate());
 
         if(data.get(position).getLike().size() != 0){
-            holder.tv_like.setText(data.get(position).getLike().size());
+            holder.tv_like.setText(String.valueOf(data.get(position).getLike().size()));
         }else{
             holder.tv_like.setText("0");
         }
@@ -79,7 +85,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
 
         holder.tv_post.setText(data.get(position).getDescription());
 
-        if(data.get(position).getImage() != null){
+        if(data.get(position).getImage() != null && data.get(position).getImage().getUrl() != null){
             Picasso.with(context).load(data.get(position).getImage().getUrl()).into(holder.iv_photo);
             holder.iv_photo.setVisibility(View.VISIBLE);
         }else{
@@ -98,39 +104,75 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
         for (String s : data.get(position).getLike()){
             if(s.equals(manager.getUserId())){
                 isLikedByMe = true;
+                break;
             }
         }
 
         if(!isLikedByMe){
-            holder.tv_like.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Call<Void> call = PetServicesApplication.getInstance().getServices().like(data.get(position).getId(),manager.getUserId());
-
-                    call.enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if(response.isSuccessful()){
-                                String count = holder.tv_like.getText().toString();
-
-                                int new_count = Integer.parseInt(count);
-
-                                holder.tv_like.setText(String.valueOf(new_count));
-
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Utils.showToastInternalServerError(context);
-                        }
-                    });
-                }
-            });
+            setLikeListener(holder.tv_like,position);
         }else{
-            holder.tv_like.setOnClickListener(null);
+            setDislikeListener(holder.tv_like,position);
         }
+    }
 
+    private void setLikeListener(final TextView tv_like, final int position){
+        tv_like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map<String, String> map = new HashMap<>();
+                map.put("idPublicacion", data.get(position).getId());
+                map.put("idUsuario", manager.getUserId());
+                Log.e("like","like");
+                Call<Void> call = PetServicesApplication.getInstance().getServices().like(map);
+
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.isSuccessful()){
+                            String count = tv_like.getText().toString();
+                            int new_count = Integer.parseInt(count) + 1;
+                            tv_like.setText(String.valueOf(new_count));
+                            setDislikeListener(tv_like,position);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Utils.showToastInternalServerError(context);
+                    }
+                });
+            }
+        });
+    }
+
+    private void setDislikeListener(final TextView tv_like, final int position){
+        tv_like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map<String, String> map = new HashMap<>();
+                map.put("idPublicacion", data.get(position).getId());
+                map.put("idUsuario", manager.getUserId());
+                Log.e("dislike","dislike");
+                Call<Void> call = PetServicesApplication.getInstance().getServices().dislike(map);
+
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.isSuccessful()){
+                            String count = tv_like.getText().toString();
+                            int new_count = Integer.parseInt(count) - 1;
+                            tv_like.setText(String.valueOf(new_count));
+                            setLikeListener(tv_like,position);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Utils.showToastInternalServerError(context);
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -146,7 +188,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
         TextView tv_post;
         ImageView iv_photo;
         TextView tv_like;
-        TextView tv_dislike;
 
         public MyHolder(View itemView) {
             super(itemView);
@@ -156,7 +197,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
             tv_post = (TextView) itemView.findViewById(R.id.tv_post);
             tv_date = (TextView) itemView.findViewById(R.id.tv_date);
             tv_like = (TextView) itemView.findViewById(R.id.tv_like);
-            tv_dislike = (TextView) itemView.findViewById(R.id.tv_dislike);
         }
     }
 }
