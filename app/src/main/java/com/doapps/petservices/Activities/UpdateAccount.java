@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.doapps.petservices.Network.Models.PetResponse;
 import com.doapps.petservices.Network.Models.SignUpResponse;
+import com.doapps.petservices.Network.Models.UserData;
 import com.doapps.petservices.PetServicesApplication;
 import com.doapps.petservices.R;
 import com.doapps.petservices.Utils.Constants;
@@ -62,8 +63,6 @@ public class UpdateAccount extends AppCompatActivity {
 
     @BindView(R.id.iv_photo)
     ImageView iv_photo;
-    @BindView(R.id.tv_photo)
-    TextView tv_photo;
     @BindView(R.id.et_nombre)
     EditText et_nombre;
     @BindView(R.id.et_apellidos)
@@ -77,29 +76,43 @@ public class UpdateAccount extends AppCompatActivity {
 
     private PreferenceManager manager;
 
-    private ArrayList<MultipartBody.Part> fotos;
-
-    private File image_1 = null;
-
-    private ContentResolver contentResolver;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_account);
         ButterKnife.bind(this);
-        contentResolver = getContentResolver();
         manager = PreferenceManager.getInstance(this);
-        setupViews();
+        getUserData();
     }
 
-    private void setupViews() {
-        et_nombre.setText(manager.getName());
-        et_apellidos.setText(manager.getLastName());
-        et_phone.setText(manager.getUserPhone());
+    private void getUserData() {
+        Call<UserData> call = PetServicesApplication.getInstance().getServices().getUserData(manager.getUserId());
 
-        if(!manager.getUserPhoto().isEmpty()){
-            Picasso.with(this).load(manager.getUserPhoto()).into(iv_photo);
+        call.enqueue(new Callback<UserData>() {
+            @Override
+            public void onResponse(Call<UserData> call, Response<UserData> response) {
+                if(response.isSuccessful()){
+                    setupViews(response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserData> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void setupViews(Response<UserData> response) {
+        et_nombre.setText(response.body().getName());
+        et_apellidos.setText(response.body().getLast_name());
+        et_phone.setText(response.body().getPhone());
+
+        if(response.body().getPicture() != null && !response.body().getPicture().isEmpty()){
+            String newUrl = response.body().getPicture().substring(0, 4) + "s" +response.body().getPicture().substring(4, response.body().getPicture().length());
+            Picasso.with(this).load(newUrl).into(iv_photo);
+        }else{
+            iv_photo.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.empty));
         }
     }
 
@@ -108,21 +121,10 @@ public class UpdateAccount extends AppCompatActivity {
         pb.setVisibility(View.VISIBLE);
         ll_container.setVisibility(View.GONE);
 
-        fotos = new ArrayList<>();
-        if(image_1 != null){
-            final RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), image_1);
-            MultipartBody.Part body = MultipartBody.Part.createFormData("image", image_1.getName(), requestFile);
-            fotos.add(0,body);
-        }
-
-        Map<String, String> map = new HashMap<>();
-        map.put("id", manager.getUserId());
-
-        Call<SignUpResponse> call = PetServicesApplication.getInstance().getServices().updateUser(map,RequestBody.create(MediaType.parse("text/plain"),et_nombre.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),et_apellidos.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),et_phone.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),manager.getUserId()),
-                fotos.size() != 0 ? fotos : null);
+        Call<SignUpResponse> call = PetServicesApplication.getInstance().getServices().updateUser(manager.getUserId(),
+               et_nombre.getText().toString(),
+                et_apellidos.getText().toString(),
+                et_phone.getText().toString());
 
         call.enqueue(new Callback<SignUpResponse>() {
             @Override
@@ -152,78 +154,5 @@ public class UpdateAccount extends AppCompatActivity {
         user.setLast_name(et_apellidos.getText().toString());
         user.setPhone(et_phone.getText().toString());
 
-    }
-
-    @OnClick(R.id.tv_photo)
-    public void tv_photo_click(){
-        showDialogFotos();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == Activity.RESULT_OK){
-            //when camera was openned
-            if(requestCode == Constants.CAMERA_REQUEST){
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                image_1 = Utils.persistImage(photo,getApplicationContext());
-                setFotoIntoIv(photo);
-            }
-            //when gallery was openned
-            if(requestCode == Constants.REQUEST_IMAGE_GALLERY){
-                Uri selectedImageUri = data.getData();
-                String picturePath = Utils.getRealPathFromURI(contentResolver, selectedImageUri);
-                Bitmap photo = BitmapFactory.decodeFile(picturePath);
-                image_1 = Utils.persistImage(photo,getApplicationContext());
-                setFotoIntoIv(photo);
-            }
-        }
-    }
-
-    private void setFotoIntoIv(Bitmap photo) {
-        iv_photo.setImageBitmap(photo);
-    }
-
-    private void showDialogFotos() {
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //add custom dialog
-        dialog.setContentView(R.layout.custom_uploadpic_dialog);
-        LinearLayout ll_take_photo = (LinearLayout) dialog.findViewById(R.id.ll_take_photo);
-        LinearLayout ll_phone_gallery = (LinearLayout) dialog.findViewById(R.id.ll_phone_gallery);
-        //open camera
-        ll_take_photo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, Constants.CAMERA_REQUEST);
-            }
-        });
-        //open gallery, ask permisions if needed
-        ll_phone_gallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-
-                if (ContextCompat.checkSelfPermission(UpdateAccount.this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(UpdateAccount.this,
-                            Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-                    } else {
-
-                        ActivityCompat.requestPermissions(UpdateAccount.this,
-                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},2);
-                    }
-                }else{
-                    Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    if (photoPickerIntent.resolveActivity(UpdateAccount.this.getPackageManager()) != null) {
-                        photoPickerIntent.setType("image/*");
-                        startActivityForResult(photoPickerIntent, Constants.REQUEST_IMAGE_GALLERY);
-                    }
-                }
-            }
-        });
-        dialog.show();
     }
 }

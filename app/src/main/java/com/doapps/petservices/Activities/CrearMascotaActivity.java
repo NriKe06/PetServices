@@ -160,17 +160,18 @@ public class CrearMascotaActivity extends AppCompatActivity {
             MultipartBody.Part body = MultipartBody.Part.createFormData("image", image_1.getName(), requestFile);
             fotos.add(0,body);
         }
-        Call<PetResponse> call = PetServicesApplication.getInstance().getServices().createPet(RequestBody.create(MediaType.parse("text/plain"),et_nombre.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),et_raza.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),et_edad.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),et_peso.getText().toString()),
-                RequestBody.create(MediaType.parse("text/plain"),manager.getUserId()),
-                fotos.size() != 0 ? fotos : null);
+        Call<PetResponse> call = PetServicesApplication.getInstance().getServices().createPet(  RequestBody.create(MediaType.parse("text/plain"),et_nombre.getText().toString()),
+                                                                                                RequestBody.create(MediaType.parse("text/plain"),et_raza.getText().toString()),
+                                                                                                RequestBody.create(MediaType.parse("text/plain"),et_edad.getText().toString()),
+                                                                                                RequestBody.create(MediaType.parse("text/plain"),et_peso.getText().toString()),
+                                                                                                RequestBody.create(MediaType.parse("text/plain"),manager.getUserId()),
+                                                                                                fotos.size() != 0 ? fotos : null);
 
         call.enqueue(new Callback<PetResponse>() {
             @Override
             public void onResponse(Call<PetResponse> call, Response<PetResponse> response) {
                 if(response.isSuccessful()){
+                    Utils.showToast(CrearMascotaActivity.this,"Mascota agregada con éxito.");
                     Intent i = new Intent(CrearMascotaActivity.this,HomeActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);

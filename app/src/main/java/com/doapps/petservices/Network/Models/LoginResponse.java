@@ -9,6 +9,7 @@ public class LoginResponse {
     String ttl;
     String created;
     String userId;
+    User user;
 
     public String getId() {
         return id;
@@ -40,5 +41,13 @@ public class LoginResponse {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

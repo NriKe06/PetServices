@@ -7,8 +7,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import com.doapps.petservices.Adapters.PostAdapter;
 import com.doapps.petservices.Models.Post;
 import com.doapps.petservices.Network.Models.Photo;
 import com.doapps.petservices.Network.Models.PostResponse;
+import com.doapps.petservices.Network.Models.UserData;
 import com.doapps.petservices.PetServicesApplication;
 import com.doapps.petservices.R;
 import com.doapps.petservices.Utils.Constants;
@@ -62,12 +65,30 @@ public class PerfilFragment extends Fragment {
 
         manager = PreferenceManager.getInstance(getActivity());
 
-        setupViews(v);
-
-        getUserPost();
+        getUserData(v);
 
         return v;
     }
+
+    private void getUserData(final View v) {
+        Call<UserData> call = PetServicesApplication.getInstance().getServices().getUserData(manager.getUserId());
+
+        call.enqueue(new Callback<UserData>() {
+            @Override
+            public void onResponse(Call<UserData> call, Response<UserData> response) {
+                if(response.isSuccessful()){
+                    setupViews(v,response);
+                    getUserPost();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserData> call, Throwable t) {
+                Utils.showToastInternalServerError(getActivity());
+            }
+        });
+    }
+
 
     private void getUserPost() {
         Call<ArrayList<PostResponse>> call = PetServicesApplication.getInstance().getServices().getUserPosts(manager.getUserId());
@@ -87,7 +108,7 @@ public class PerfilFragment extends Fragment {
         });
     }
 
-    private void setupViews(View v) {
+    private void setupViews(View v, Response<UserData> response) {
         rv_my_post = (RecyclerView) v.findViewById(R.id.rv_my_post);
         tv_pets = (TextView) v.findViewById(R.id.tv_pets);
         iv_photo = (ImageView) v.findViewById(R.id.iv_photo);
@@ -95,10 +116,13 @@ public class PerfilFragment extends Fragment {
         menu_edit = (com.github.clans.fab.FloatingActionButton) v.findViewById(R.id.menu_edit);
         menu_add = (com.github.clans.fab.FloatingActionButton) v.findViewById(R.id.menu_add);
 
-        tv_username.setText(manager.getName());
+        tv_username.setText(response.body().getName());
 
-        if(!manager.getUserPhoto().isEmpty()){
-            Picasso.with(getActivity()).load(manager.getUserPhoto()).into(iv_photo);
+        if(manager.getUserPhoto() != null && !manager.getUserPhoto().isEmpty()){
+            String newUrl = manager.getUserPhoto().substring(0, 4) + "s" + manager.getUserPhoto().substring(4,manager.getUserPhoto().length());
+            Picasso.with(getActivity()).load(newUrl).into(iv_photo);
+        }else{
+            iv_photo.setImageDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.empty));
         }
 
         menu_edit.setOnClickListener(new View.OnClickListener() {

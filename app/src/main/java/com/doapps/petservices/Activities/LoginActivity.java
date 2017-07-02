@@ -160,6 +160,8 @@ public class LoginActivity extends AppCompatActivity {
                     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                         if(response.isSuccessful()){
                             manager.setUserId(response.body().getUserId());
+                            manager.setUserName(et_user.getText().toString());
+                            manager.setUserPhoto(response.body().getUser().getPicture());
                             startActivity(new Intent(LoginActivity.this,HomeActivity.class));
                             finish();
                         }
@@ -200,6 +202,7 @@ public class LoginActivity extends AppCompatActivity {
                 if(response.isSuccessful()){
                     manager.setUserId(response.body().getUserId());
                     manager.setUserName(et_user.getText().toString());
+                    manager.setUserPhoto(response.body().getUser().getPicture());
                     startActivity(new Intent(LoginActivity.this,HomeActivity.class));
                     finish();
                 }else{

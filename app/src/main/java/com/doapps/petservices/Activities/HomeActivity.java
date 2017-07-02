@@ -14,6 +14,8 @@ import android.view.View;
 import com.doapps.petservices.Adapters.HomePagerAdapter;
 import com.doapps.petservices.R;
 import com.doapps.petservices.Utils.PreferenceManager;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -26,6 +28,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_home);
         manager = PreferenceManager.getInstance(getApplicationContext());
         setupTabs();
@@ -56,6 +59,7 @@ public class HomeActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.logout:
                 manager.logout();
+                LoginManager.getInstance().logOut();
                 Intent intent = new Intent(HomeActivity.this,PetFlash.class);
                 startActivity(intent);
                 finish();
