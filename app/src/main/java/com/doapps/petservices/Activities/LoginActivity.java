@@ -202,7 +202,9 @@ public class LoginActivity extends AppCompatActivity {
                 if(response.isSuccessful()){
                     manager.setUserId(response.body().getUserId());
                     manager.setUserName(et_user.getText().toString());
-                    manager.setUserPhoto(response.body().getUser().getPicture());
+                    if(response.body().getUser() != null && !response.body().getUser().getPicture().isEmpty()){
+                        manager.setUserPhoto(response.body().getUser().getPicture());
+                    }
                     startActivity(new Intent(LoginActivity.this,HomeActivity.class));
                     finish();
                 }else{

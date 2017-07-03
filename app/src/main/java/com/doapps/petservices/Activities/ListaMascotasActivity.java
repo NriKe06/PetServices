@@ -16,6 +16,8 @@ import com.doapps.petservices.R;
 import com.doapps.petservices.Utils.PreferenceManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,7 +46,10 @@ public class ListaMascotasActivity extends AppCompatActivity {
     }
 
     private void getMascotas() {
-        Call<ArrayList<Mascota>> call = PetServicesApplication.getInstance().getServices().getMascotas(manager.getUserId());
+        Map<String, String> map = new HashMap<>();
+        map.put("id",manager.getUserId());
+
+        Call<ArrayList<Mascota>> call = PetServicesApplication.getInstance().getServices().getMascotas(map);
 
         call.enqueue(new Callback<ArrayList<Mascota>>() {
             @Override

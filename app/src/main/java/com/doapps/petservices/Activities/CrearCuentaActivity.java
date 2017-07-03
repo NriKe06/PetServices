@@ -3,6 +3,8 @@ package com.doapps.petservices.Activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -66,6 +68,11 @@ public class CrearCuentaActivity extends AppCompatActivity {
         }else if (getIntent().getBooleanExtra(Constants.SIGN_UP_EMPRESA,false)){
             et_nombre.setHint("Razón Social");
             et_apellidos.setHint("RUC");
+            int maxLength = 11;
+            InputFilter[] fArray = new InputFilter[1];
+            fArray[0] = new InputFilter.LengthFilter(maxLength);
+            et_apellidos.setFilters(fArray);
+            et_apellidos.setInputType(InputType.TYPE_CLASS_NUMBER);
         }else{
             finish();
         }
@@ -146,6 +153,8 @@ public class CrearCuentaActivity extends AppCompatActivity {
         if(!cancel){
             if(getIntent().getBooleanExtra(Constants.SIGN_UP_PERSONA,false)){
                 signUpRequestClient();
+            }else if(getIntent().getBooleanExtra(Constants.SIGN_UP_EMPRESA,false)){
+                signUpRequestEmpresa();
             }
         }
     }
@@ -186,6 +195,10 @@ public class CrearCuentaActivity extends AppCompatActivity {
                 Utils.showToastInternalServerError(CrearCuentaActivity.this);
             }
         });
+    }
+
+    private void signUpRequestEmpresa(){
+
     }
 
     @Override

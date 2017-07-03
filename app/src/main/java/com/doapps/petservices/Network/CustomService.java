@@ -40,6 +40,13 @@ public interface CustomService {
     @POST(Urls.USER_SIGN_UP)
     Call<SignUpResponse> signUpClient(@Body SignUpBodyClient signUpBodyClient);
 
+    @POST(Urls.USER_SIGN_UP)
+    Call<SignUpResponse> signUpClient(@Query("organization") String organization,
+                                      @Query("ruc") String ruc,
+                                      @Query("email") String email,
+                                      @Query("phone") String phone,
+                                      @Query("password") String password);
+
     @Multipart
     @POST(Urls.CREATE_PET)
     Call<PetResponse> createPet(@Part("name_pet") RequestBody firstname
@@ -79,5 +86,5 @@ public interface CustomService {
     Call<ArrayList<PostResponse>> filterPost(@HeaderMap Map<String, String> headers);
 
     @GET(Urls.MASCOTAS)
-    Call<ArrayList<Mascota>> getMascotas(@Path("id") String id);
+    Call<ArrayList<Mascota>> getMascotas(@HeaderMap Map<String, String> headers);
 }
